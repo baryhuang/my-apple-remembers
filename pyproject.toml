@@ -1,0 +1,20 @@
+[project]
+name = "mcp_my_apple_remembers"
+version = "0.1.0"
+description = "A simple Apple Remembers MCP server"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["mcp>=1.4.1", "python-dotenv>=1.0.1", "paramiko>=3.5.1"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = ["pyright>=1.1.389"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcp_my_apple_remembers"]
+
+[project.scripts]
+mcp_my_apple_remembers = "mcp_my_apple_remembers:main" 
