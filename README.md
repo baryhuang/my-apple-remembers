@@ -32,7 +32,7 @@ You can configure Claude Desktop to use the Docker image by adding the following
         "-e",
         "MACOS_PASSWORD=your_macos_password",
         "-e",
-        "MACOS_HOST=your_macos_hostname_or_ip",
+        "MACOS_HOST=localhost",
         "--rm",
         "buryhuang/mcp-my-apple-remembers:latest"
       ]
