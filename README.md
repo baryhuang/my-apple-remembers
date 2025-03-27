@@ -1,7 +1,10 @@
 # MCP Server - My Apple Remembers
-**A simple MCP server that enables AI to execute AppleScript on remote macOS systems to recall and save memories.**
+**A simple MCP server that recalls and saves memories from and to Apple Notes.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/9bd5bc1c-02fe-4e71-88c4-46b3e9438ac0" />
+
 
 ## Features
 
