@@ -66,22 +66,10 @@ docker buildx build --platform linux/amd64,linux/arm64 -t yourusername/mcp-my-ap
 ### Tools Specifications
 
 #### my_apple_recall_memory
-Run AppleScript commands on a remote macOS system to recall memories. This tool helps access Apple Notes, Calendar events, iMessages, chat history, files, and other information on your Mac. Example:
-```json
-{
-  "apple_script": "tell application \"Notes\" to get the name of every note",
-  "timeout": 60
-}
-```
+Run AppleScript commands on a remote macOS system to recall memories. This tool helps access Apple Notes, Calendar events, iMessages, chat history, files, and other information on your Mac.
 
 #### my_apple_save_memory
-Run AppleScript commands on a remote macOS system to save important information. This tool allows AI to persist relevant information to Apple Notes for future reference. Example:
-```json
-{
-  "apple_script": "tell application \"Notes\" to make new note with properties {name:\"Meeting Summary\", body:\"Important points discussed...\"}",
-  "timeout": 60
-}
-```
+Run AppleScript commands on a remote macOS system to save important information. This tool allows AI to persist relevant information to Apple Notes for future reference. 
 
 All tools require macOS SSH access, with host and password.
 

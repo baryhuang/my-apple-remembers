@@ -73,7 +73,7 @@ async def main():
             ),
             types.Tool(
                 name="my_apple_save_memory",
-                description="Run Apple Script on a remote MacOs machine. This call should be used to save relevant information to the apple notes. LLM should decide what information to save.",
+                description="Run Apple Script on a remote MacOs machine. This call should be used to save relevant information to the apple notes. You decide what information to save. You should always add a new notes with a timestamp as the title.",
                 inputSchema={
                     "type": "object",
                     "properties": {
