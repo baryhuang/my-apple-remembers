@@ -13,6 +13,12 @@
 * **Minimal Setup**: Just enable Remote Login on the target Mac
 * **Universal Compatibility**: Works with all macOS versions
 
+## Control in your hand
+You can use prompt to instruct how you want your memory to be save. For example:
+```
+You should always use Folder "baryhuang" on recall and save memory.
+```
+
 ## Installation
 - [Enable SSH on macOS](https://support.apple.com/guide/mac-help/allow-a-remote-computer-to-access-your-mac-mchlp1066/mac)
 - [Install Docker Desktop for local Mac](https://docs.docker.com/desktop/setup/install/mac-install/)
