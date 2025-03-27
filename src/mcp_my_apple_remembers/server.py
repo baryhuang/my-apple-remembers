@@ -65,10 +65,10 @@ async def main():
                 inputSchema={
                     "type": "object",
                     "properties": {
-                        "apple_script": {"type": "string", "description": "The one-line apple script that will execute on the remote machine."},
+                        "code_snippet": {"type": "string", "description": "AppleScript code to execute on the remote machine. Can be a single line or multi-line script. You should prefer multi-line scripts for complex operations."},
                         "timeout": {"type": "integer", "description": "Command execution timeout in seconds (default: 60)"}
                     },
-                    "required": ["apple_script"]
+                    "required": ["code_snippet"]
                 },
             ),
             types.Tool(
@@ -77,10 +77,10 @@ async def main():
                 inputSchema={
                     "type": "object",
                     "properties": {
-                        "apple_script": {"type": "string", "description": "The one-line apple script that will execute on the remote machine."},
+                        "code_snippet": {"type": "string", "description": "AppleScript code to execute on the remote machine. Can be a single line or multi-line script. You should prefer multi-line scripts for complex operations."},
                         "timeout": {"type": "integer", "description": "Command execution timeout in seconds (default: 60)"}
                     },
-                    "required": ["apple_script"]
+                    "required": ["code_snippet"]
                 },
             )
         ]
@@ -96,7 +96,7 @@ async def main():
             if not arguments:
                 arguments = {}
             
-            if name == "my_apple_recall_memory" or "my_apple_save_memory":
+            if name == "my_apple_recall_memory" or name == "my_apple_save_memory":
                 # Use environment variables
                 ## Since this is running inside the docker, if user want to connect to the local macos machine, we need to use the host.docker.internal
                 host = MACOS_HOST
@@ -108,13 +108,14 @@ async def main():
 
                 logger.info(f"Connecting to {host}:{port} as {username}")
                 
-                # Get required parameters from arguments
-                apple_script = arguments.get("apple_script")
+                # Get parameters from arguments
+                code_snippet = arguments.get("code_snippet")
                 timeout = int(arguments.get("timeout", 60))
                 
-                if not apple_script:
-                    logger.error("Missing required parameter: apple_script")
-                    raise ValueError("apple_script is required to execute on the remote machine")
+                # Check if we have required parameters
+                if not code_snippet:
+                    logger.error("Missing required parameter: code_snippet")
+                    raise ValueError("code_snippet is required to execute on the remote machine")
                 
                 try:
                     # Import required libraries
@@ -122,6 +123,7 @@ async def main():
                     import io
                     import base64
                     import time
+                    import uuid
                     from socket import timeout as socket_timeout
                 except ImportError as e:
                     logger.error(f"Missing required libraries: {str(e)}")
@@ -129,11 +131,6 @@ async def main():
                         type="text",
                         text=f"Error: Missing required libraries. Please install paramiko: {str(e)}"
                     )]
-                
-                # Construct the osascript command
-                escaped_script = apple_script.replace('"', '\\"')
-                command = f'osascript -e "{escaped_script}"'
-                logger.info(f"Executing AppleScript command")
                 
                 # Initialize SSH client
                 ssh = paramiko.SSHClient()
@@ -150,6 +147,42 @@ async def main():
                     )
                     
                     logger.info(f"Successfully connected to {host}")
+                    
+                    # Determine execution method based on script complexity
+                    is_multiline = '\n' in code_snippet
+                    
+                    if is_multiline:
+                        # File-based execution for multi-line scripts
+                        
+                        # Generate a unique temporary filename
+                        temp_script_filename = f"/tmp/applescript_{uuid.uuid4().hex}.scpt"
+                        
+                        # Open SFTP session and upload the script
+                        sftp = ssh.open_sftp()
+                        
+                        try:
+                            # Create the script file on the remote system
+                            with sftp.open(temp_script_filename, 'w') as remote_file:
+                                remote_file.write(code_snippet)
+                            
+                            logger.info(f"Script file uploaded to {temp_script_filename}")
+                            
+                            # Set execute permissions
+                            sftp.chmod(temp_script_filename, 0o755)
+                            
+                            # Execute the script file
+                            command = f'osascript {temp_script_filename}'
+                            logger.info(f"Executing AppleScript file: {command}")
+                            
+                        finally:
+                            # Always close SFTP after file operations
+                            sftp.close()
+                            
+                    else:
+                        # Direct command execution for single-line scripts
+                        escaped_script = code_snippet.replace('"', '\\"')
+                        command = f'osascript -e "{escaped_script}"'
+                        logger.info(f"Executing AppleScript command")
                     
                     # Execute command with PTY (pseudo-terminal) for interactive commands
                     channel = ssh.get_transport().open_session()
@@ -192,6 +225,17 @@ async def main():
                     # Get exit status
                     exit_status = channel.recv_exit_status()
                     logger.info(f"Command completed with exit status: {exit_status}")
+                    
+                    # Cleanup temp file if created
+                    if is_multiline:
+                        try:
+                            # Open a new SFTP session for cleanup
+                            sftp = ssh.open_sftp()
+                            sftp.remove(temp_script_filename)
+                            sftp.close()
+                            logger.info(f"Script file {temp_script_filename} removed")
+                        except Exception as e:
+                            logger.warning(f"Failed to remove script file: {str(e)}")
                     
                     # Decode complete buffers once all data is received
                     try:
