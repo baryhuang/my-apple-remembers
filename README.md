@@ -31,7 +31,7 @@ You can configure Claude Desktop to use the Docker image by adding the following
         "-e",
         "MACOS_HOST=your_macos_hostname_or_ip",
         "--rm",
-        "your-docker-username/mcp-my-apple-remembers:latest"
+        "buryhuang/mcp-my-apple-remembers:latest"
       ]
     }
   }
@@ -42,7 +42,7 @@ You can configure Claude Desktop to use the Docker image by adding the following
 ### Clone the repo
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/mcp-my-apple-remembers.git
+git clone https://github.com/baryhuang/mcp-my-apple-remembers.git
 cd mcp-my-apple-remembers
 ```
 
@@ -60,7 +60,7 @@ docker build -t mcp-my-apple-remembers .
 docker buildx create --use
 
 # Build and push the multi-platform image
-docker buildx build --platform linux/amd64,linux/arm64 -t yourusername/mcp-my-apple-remembers:latest --push .
+docker buildx build --platform linux/amd64,linux/arm64 -t buryhuang/mcp-my-apple-remembers:latest --push .
 ```
 
 ### Tools Specifications
