@@ -1,57 +1,21 @@
 # MCP Server - My Apple Remembers
-**A simple MCP server that enables AI to execute AppleScript on remote macOS systems.**
+**A simple MCP server that enables AI to execute AppleScript on remote macOS systems to recall and save memories.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
 
-* **AppleScript Execution**: Run AppleScript commands on remote macOS systems
-* **Minimal Setup**: Just enable SSH on the target Mac 
+* **Memory Recall**: Access notes, calendar events, messages, files and other information from your Mac
+* **Memory Persistence**: Save important information to Apple Notes for future reference
+* **Minimal Setup**: Just enable Remote Login on the target Mac
 * **Universal Compatibility**: Works with all macOS versions
 
 ## Installation
-- [Enable SSH on MacOS](https://support.apple.com/guide/mac-help/allow-a-remote-computer-to-access-your-mac-mchlp1066/mac)
+- [Enable SSH on macOS](https://support.apple.com/guide/mac-help/allow-a-remote-computer-to-access-your-mac-mchlp1066/mac)
 - [Install Docker Desktop for local Mac](https://docs.docker.com/desktop/setup/install/mac-install/)
 - [Add this MCP server to Claude Desktop](https://modelcontextprotocol.io/quickstart/user)
 
 You can configure Claude Desktop to use the Docker image by adding the following to your Claude configuration:
-```json
-{
-  "mcpServers": {
-    "my-apple-remembers": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "buryhuang/mcp-my-apple-remembers:latest"
-      ]
-    }
-  }
-}
-```
-
-## Developer Instructions
-### Clone the repo
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/mcp-my-apple-remembers.git
-cd mcp-my-apple-remembers
-```
-
-### Building the Docker Image
-
-```bash
-# Build the Docker image
-docker build -t mcp-my-apple-remembers .
-```
-
-## Usage with Claude Desktop
-
-### Docker Usage
-
-You can configure Claude Desktop to use the Docker image by adding the following to your Claude configuration:
-
 ```json
 {
   "mcpServers": {
@@ -74,17 +38,47 @@ You can configure Claude Desktop to use the Docker image by adding the following
 }
 ```
 
-## Usage
+## Developer Instructions
+### Clone the repo
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/mcp-my-apple-remembers.git
+cd mcp-my-apple-remembers
+```
 
-The server provides AppleScript execution functionality through MCP tools.
+### Building the Docker Image
+
+```bash
+# Build the Docker image
+docker build -t mcp-my-apple-remembers .
+```
+
+### Publishing Multi-Platform Docker Images
+
+```bash
+# Set up Docker buildx for multi-platform builds
+docker buildx create --use
+
+# Build and push the multi-platform image
+docker buildx build --platform linux/amd64,linux/arm64 -t yourusername/mcp-my-apple-remembers:latest --push .
+```
 
 ### Tools Specifications
 
-#### remote_macos_apple_script
-Run AppleScript commands on a remote macOS system. Example:
+#### my_apple_recall_memory
+Run AppleScript commands on a remote macOS system to recall memories. This tool helps access Apple Notes, Calendar events, iMessages, chat history, files, and other information on your Mac. Example:
 ```json
 {
-  "apple_script": "tell application \"System Events\" to get the name of every process",
+  "apple_script": "tell application \"Notes\" to get the name of every note",
+  "timeout": 60
+}
+```
+
+#### my_apple_save_memory
+Run AppleScript commands on a remote macOS system to save important information. This tool allows AI to persist relevant information to Apple Notes for future reference. Example:
+```json
+{
+  "apple_script": "tell application \"Notes\" to make new note with properties {name:\"Meeting Summary\", body:\"Important points discussed...\"}",
   "timeout": 60
 }
 ```
